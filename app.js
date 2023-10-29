@@ -13,10 +13,21 @@ app.use(express.json());
 app.use("/", routerView);
 app.use("/", routerEdit);
 app.use("/login", routerAuth);
+app.use(validarMetodoHttp);
 
 app.get("/", (req, res) => {
   res.send("Pagina principal");
 });
+
+//Middleware para validar metodos HTTP:
+function validarMetodoHttp(req, res, next) {
+  const metodosValidos = ["GET", "POST", "PUT", "DELETE"];
+
+  if (!metodosValidos.includes(req.method)) {
+    return res.status(400).json({ error: "Metodo HTTP no valido." });
+  }
+  next();
+}
 
 // function validarToken(req, res, next) {
 //   const accesToken = req.headers.authorization;
