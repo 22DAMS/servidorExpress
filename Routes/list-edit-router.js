@@ -7,17 +7,17 @@ routerEdit.use((req, res, next) => {
   const bodyKeys = Object.keys(req.body);
   const paramsKeys = Object.values(req.params);
 
-  if (req.method === "POST" && bodyKeys.length === 0) {
-    return res.status(400).json({ error: "Solicitud vacia." });
-  }
-  if (req.method === "POST") {
+  if (req.method === "POST" && req.path !== "/login") {
+    if (bodyKeys.length === 0) {
+      return res.status(400).json({ error: "Solicitud vacía." });
+    }
     if (!bodyKeys.includes("id") || !bodyKeys.includes("description")) {
       return res
         .status(400)
         .json({ error: "Solicitud con información incompleta" });
     }
   }
-  if (req.method === "PUT" && paramsKeys.length === 0) {
+  if (req.method === "PUT" && bodyKeys.length === 0) {
     return res.status(400).json({ error: "Solicitud vacia." });
   }
   next();
@@ -27,27 +27,47 @@ routerEdit.use((req, res, next) => {
 routerEdit.post("/tarea", (req, res) => {
   const { id, description } = req.body;
   listaTareas.agregarTarea(id, description);
-  res.json(listaTareas);
+  res.status(201).json(listaTareas);
 });
 
 //Solicitud PUT
-routerEdit.put("/tarea/:id", (req, res) => {
-  const tareaID = req.params.id;
+routerEdit.put("/tarea", (req, res) => {
+  const tareaID = req.body.id; // Accede al ID desde el cuerpo
   const tareaIndex = listaTareas.listaTareas.findIndex(
     (tarea) => tarea.id === tareaID
   );
   listaTareas.completarTarea(tareaIndex);
-  res.json(listaTareas);
+  res.status(201).json(listaTareas);
 });
 
+//Recibir ID por path params:
+// routerEdit.put("/tarea/:id", (req, res) => {
+//   const tareaID = req.params.id;
+//   const tareaIndex = listaTareas.listaTareas.findIndex(
+//     (tarea) => tarea.id === tareaID
+//   );
+//   listaTareas.completarTarea(tareaIndex);
+//   res.json(listaTareas);
+// });
+
 //Solicitud DELETE
-routerEdit.delete("/tarea/:id", (req, res) => {
-  const tareaID = req.params.id;
+routerEdit.delete("/tarea", (req, res) => {
+  const tareaID = req.body.id;
   const tareaIndex = listaTareas.listaTareas.findIndex(
     (tarea) => tarea.id === tareaID
   );
   listaTareas.eliminarTarea(tareaIndex);
-  res.json(listaTareas);
+  res.status(200).json(listaTareas);
 });
+
+//Recibir ID por path params:
+// routerEdit.delete("/tarea/:id", (req, res) => {
+//   const tareaID = req.params.id;
+//   const tareaIndex = listaTareas.listaTareas.findIndex(
+//     (tarea) => tarea.id === tareaID
+//   );
+//   listaTareas.eliminarTarea(tareaIndex);
+//   res.json(listaTareas);
+// });
 
 module.exports = routerEdit;

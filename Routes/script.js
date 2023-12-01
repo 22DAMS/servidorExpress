@@ -45,6 +45,12 @@ function completarTarea(indice) {
   listaTareas[indice].isCompleted = true;
 }
 
+//bucar una tarea por id:
+function buscarTarea(indice) {
+  const tareaBuscada = listaTareas.filter((tarea) => tarea.id === indice);
+  return tareaBuscada;
+}
+
 module.exports = {
   listaTareas,
   listarTareas,
@@ -53,4 +59,5 @@ module.exports = {
   agregarTarea,
   eliminarTarea,
   completarTarea,
+  buscarTarea,
 };
